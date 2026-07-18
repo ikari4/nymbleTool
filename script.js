@@ -1,4 +1,15 @@
 
+function getNextWeekday(lastDate) {
+    const date = new Date(lastDate + "T00:00:00"); // avoid timezone issues
+
+    do {
+        date.setDate(date.getDate() + 1);
+    } while (date.getDay() === 0 || date.getDay() === 6); // 0=Sun, 6=Sat
+
+    return date.toISOString().split("T")[0];
+}
+
+
 // main script begins here
 // on page load
 window.addEventListener("load", async() => {
@@ -7,7 +18,8 @@ window.addEventListener("load", async() => {
     const loginBtn = document.getElementById("loginBtn");
     const logout = document.getElementById("logout");
     const username = localStorage.getItem("nymname");
-    const playerId = localStorage.getItem("nymId"); 
+    const playerId = localStorage.getItem("nymId");
+    const titleDiv = document.getElementById("titleDiv"); 
 
     // show login screen if user not logged in
     if(!username) {
@@ -15,9 +27,64 @@ window.addEventListener("load", async() => {
         return;
 
     } else {
+        titleDiv.textContent = "nymbleTool";
+
+        // find latest date from database
+        const resDate = await fetch("/api/getFirstEmptyWeekday", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+        });
+        const resJSON = await resDate.json();
+        const rowDate = resJSON[0];
+        const lastDate = rowDate.datePlayed;
+        const nextDate = getNextWeekday(lastDate);
+
+        // pre-populate the date field
+        document.getElementById("datePlayed").value = nextDate;
+
+        // submit button
+        document.getElementById("submitPuzzleBtn").addEventListener("click", async () => {
+
+            const puzzle = {
+                datePlayed: document.getElementById("datePlayed").value,
+                word: document.getElementById("word").value.trim(),
+                clue0: document.getElementById("clue0").value.trim(),
+                clue1: document.getElementById("clue1").value.trim()
+            };
+
+            // Basic validation
+            if (!puzzle.datePlayed || !puzzle.word || !puzzle.clue0 || !puzzle.clue1) {
+                alert("Please complete all fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/writePuzzle.js", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(puzzle)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert("Puzzle saved!");
+                    console.log(result);
+                } else {
+                    alert(result.error || "Error saving puzzle.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Unable to connect to the server.");
+            }
+        });
 
         // logout button
-        
         const logoutBtn = document.createElement("button");
         logoutBtn.classList = "button";
         logoutBtn.innerHTML = "Logout";
@@ -29,10 +96,6 @@ window.addEventListener("load", async() => {
         logout.appendChild(logoutBtn);
     }; 
 });
-
-
-
-
 
 // splash screen fadeaway
 window.addEventListener("load", () => {

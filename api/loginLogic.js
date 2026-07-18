@@ -33,6 +33,10 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: "Invalid credentials" });
     }
 
+    if (user.username !== "admin") {
+        return res.status(401).json({ error: "Invalid credentials" });
+    }
+
     delete user.player_pw;
 
     return res.status(200).json({ user: user });
