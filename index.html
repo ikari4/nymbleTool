@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./nymble.png" type="image/png">
+    <link rel="apple-touch-icon" href="./nymble.png">
+    <link rel="mask-icon" href="./nymble.png " color="black">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <title>nymbleTool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="splash">
+        <img src="nymbleLarge.png" alt="Loading...">
+    </div>
+    <div id="loginModal" style="display:none">
+        <div id="loginTitle">nymbleTool</div>
+        <div class="inputRow">
+            <label for="inputEmail">email: </label>
+            <input id="inputEmail" type="email" placeholder="email" required>
+        </div>
+        <div class="inputRow">
+            <label for="inputPassword">password: </label>
+            <input id="inputPassword" type="password" placeholder="password" required>
+        </div>
+        <div class="inputRow">
+            <button id="loginBtn" class="button">Login</button>
+        </div>
+        <p id="loginError" style="color:red;"></p>
+    </div>
+
+    <div id="page" style="display:none;">
+        <div id="logout"></div>
+    <!-- <div id="outerDiv">
+        <div id="titleDiv"></div>
+        <div id="headerDiv">
+            <div id="headLeft">
+                <div id="welcomeDiv"></div>
+                <div id="userDiv"></div>
+            </div>
+            <div id="headRight">
+                <div id="scoreLabelDiv"></div>
+                <div id="scoreNumDiv"></div>
+            </div>
+        </div>
+        <div id="wordDiv"></div>
+        <div id="msgDiv"></div>
+        <div id="clueDiv">
+            <div id="clueTitleDiv"></div>
+            <div class="clueNDiv" id="clue0Div">
+                <div id="clue0DivNum"></div>
+                <div id="clue0DivText"></div>
+            </div>
+            <div class="clueNDiv" id="clue1Div">
+                <div id="clue1DivNum"></div>
+                <div id="clue1DivText"></div>
+            </div>
+        </div>
+        <div id="btnDiv">
+            <div id="btnDivTop"></div>
+            <div id="btnDivBottom"></div>
+        </div>
+        <div id="hr1"></div>
+        <div id="chatDiv">
+            <div id="chatTitle"></div>
+            <div id="chatInputContainer"></div>
+            <div id="chatLog"></div>
+        </div>
+        <div id="hr2"></div>
+        <div id="standingsDiv">
+            <div id = "standingsTitle"></div>
+            <table id="scoreTable"></table>
+        </div>
+        <div id="hr3"></div>
+        <div id="logout"></div>
+    </div> -->
+    </div>
+
+    <script src="./script.js"></script>    
+</body>
+</html>
