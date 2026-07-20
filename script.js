@@ -1,5 +1,18 @@
 
-function getNextWeekday(lastDate) {
+async function getNextDate() {
+    // find latest date from database
+    const resDate = await fetch("/api/getFirstEmptyWeekday", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+    });
+    const resJSON = await resDate.json();
+    const rowDate = resJSON[0];
+    const lastDate = rowDate.datePlayed;
+
+    
     const date = new Date(lastDate + "T00:00:00"); // avoid timezone issues
 
     do {
@@ -9,6 +22,106 @@ function getNextWeekday(lastDate) {
     return date.toISOString().split("T")[0];
 }
 
+function getISOWeekAndYear() {
+
+    // split string into yyyy mm dd, then create new date
+    // set date to Thursday of week
+    // find the first day of the year
+    // find weekNo based on count from first Thursday
+
+    const dateUTC = new Date();
+    const dateLocal = dateUTC.toLocaleString('en-ca');
+
+    const a = dateLocal.split(/\D/);
+    const date = new Date(a[0], a[1]-1, a[2]);
+
+    const currentDay = date.getDay();
+    const currentYear = date.getFullYear();
+    const tempDay = (currentDay + 6) % 7;
+    date.setDate(date.getDate() - tempDay + 3);
+
+    const yearStart = new Date(currentYear, 0, 1);
+    
+    const currentWeek = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    const currentDate = dateLocal.split(',')[0];
+
+    // this line used for testing; comment out everything above and uncomment below
+    // let currentDate = '2026-07-06', currentWeek = 28, currentDay = 1, currentYear = 2026;
+    return { currentDate, currentWeek, currentDay, currentYear };
+}
+
+function displayScores(scoreArray) {
+
+    statusDiv.innerHTML = "";
+
+    const table = document.createElement("table");
+    table.className = "scoresTable";
+
+    // Header
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+
+    ["Username", "Final", "Score", "Letters"].forEach(text => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Body
+    const tbody = document.createElement("tbody");
+
+    scoreArray.forEach(player => {
+
+        const row = document.createElement("tr");
+
+        // Username
+        let td = document.createElement("td");
+        td.textContent = player.username;
+        row.appendChild(td);
+
+        // Final Score
+        td = document.createElement("td");
+        if (player.finalScore === null) {
+            // td.style.backgroundColor = "black";
+        } else {
+            td.textContent = player.finalScore;
+        }
+        row.appendChild(td);
+
+        // Score
+        td = document.createElement("td");
+        if (player.finalScore === null) {
+            td.textContent = player.score;
+        } 
+        row.appendChild(td);
+
+        // Letters (only for players still playing)
+        td = document.createElement("td");
+
+        if (player.finalScore === null) {
+
+            const letters = [];
+
+            for (let i = 0; i <= 15; i++) {
+                if (player[`letter${i}Revealed`] === 1) {
+                    letters.push(i + 1); // Display 1-16 instead of 0-15
+                }
+            }
+
+            td.textContent = letters.join(", ");
+        }
+
+        row.appendChild(td);
+
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    statusDiv.appendChild(table);
+}
 
 // main script begins here
 // on page load
@@ -22,6 +135,7 @@ window.addEventListener("load", async() => {
     const titleDiv = document.getElementById("titleDiv"); 
     const outerDiv = document.getElementById("outerDiv");
     const puzzleForm = document.getElementById("puzzleForm");
+    const statusDiv = document.getElementById("statusDiv");
 
     // show login screen if user not logged in
     if(!username) {
@@ -31,20 +145,7 @@ window.addEventListener("load", async() => {
     } else {
         titleDiv.textContent = "nymbleTool";
 
-        // find latest date from database
-        const resDate = await fetch("/api/getFirstEmptyWeekday", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-        });
-        const resJSON = await resDate.json();
-        const rowDate = resJSON[0];
-        const lastDate = rowDate.datePlayed;
-        const nextDate = getNextWeekday(lastDate);
-
-        // create input table
+        // create input form
         const dateLabel = document.createElement("label");
         dateLabel.htmlFor = "datePlayed";
         dateLabel.textContent = "Date";
@@ -54,6 +155,7 @@ window.addEventListener("load", async() => {
         const dateInput = document.createElement("input");
         dateInput.type = "text";
         dateInput.id = "datePlayed";
+        const nextDate = await getNextDate();
         dateInput.value = nextDate;
         puzzleForm.appendChild(dateInput);
         puzzleForm.appendChild(document.createElement("br"));
@@ -110,7 +212,7 @@ window.addEventListener("load", async() => {
 
         // submit button
         submitBtn.addEventListener("click", async () => {
-
+            submitBtn.disabled = true;
             const puzzle = {
                 datePlayed: document.getElementById("datePlayed").value,
                 word: document.getElementById("word").value.trim(),
@@ -137,7 +239,12 @@ window.addEventListener("load", async() => {
 
                 if (response.ok) {
                     alert("Puzzle saved!");
-                    console.log(result);
+                    const nextNextDate = await getNextDate();
+                    dateInput.value = nextNextDate;
+                    wordInput.value = "";
+                    clue0Input.value = "";
+                    clue1Input.value = "";
+                    submitBtn.disabled = false;
                 } else {
                     alert(result.error || "Error saving puzzle.");
                 }
@@ -146,6 +253,21 @@ window.addEventListener("load", async() => {
                 alert("Unable to connect to the server.");
             }
         });
+
+        // status div - display all data from current day's scores
+        const { currentDate, currentWeek, currentDay, currentYear } = getISOWeekAndYear();
+        const resScore = await fetch("/api/getTodaysScore", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ currentDate })
+        });
+
+        const scoreArray = await resScore.json();
+
+        displayScores(scoreArray);
+
 
         // logout button
         const logoutBtn = document.createElement("button");
