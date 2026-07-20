@@ -20,6 +20,8 @@ window.addEventListener("load", async() => {
     const username = localStorage.getItem("nymname");
     const playerId = localStorage.getItem("nymId");
     const titleDiv = document.getElementById("titleDiv"); 
+    const outerDiv = document.getElementById("outerDiv");
+    const puzzleForm = document.getElementById("puzzleForm");
 
     // show login screen if user not logged in
     if(!username) {
@@ -42,11 +44,72 @@ window.addEventListener("load", async() => {
         const lastDate = rowDate.datePlayed;
         const nextDate = getNextWeekday(lastDate);
 
-        // pre-populate the date field
-        document.getElementById("datePlayed").value = nextDate;
+        // create input table
+        const dateLabel = document.createElement("label");
+        dateLabel.htmlFor = "datePlayed";
+        dateLabel.textContent = "Date";
+        puzzleForm.appendChild(dateLabel);
+        puzzleForm.appendChild(document.createElement("br"));
+
+        const dateInput = document.createElement("input");
+        dateInput.type = "text";
+        dateInput.id = "datePlayed";
+        dateInput.value = nextDate;
+        puzzleForm.appendChild(dateInput);
+        puzzleForm.appendChild(document.createElement("br"));
+        puzzleForm.appendChild(document.createElement("br"));
+
+        const wordLabel = document.createElement("label");
+        wordLabel.htmlFor = "word";
+        wordLabel.textContent = "Word";
+        puzzleForm.appendChild(wordLabel);
+        puzzleForm.appendChild(document.createElement("br"));
+
+        const wordInput = document.createElement("input");
+        wordInput.type = "text";
+        wordInput.id = "word";
+        puzzleForm.appendChild(wordInput);
+        puzzleForm.appendChild(document.createElement("br"));
+        puzzleForm.appendChild(document.createElement("br"));
+
+        wordInput.addEventListener("input", () => {
+            wordInput.value = wordInput.value.toUpperCase();
+        });
+
+        const clue0Label = document.createElement("label");
+        clue0Label.htmlFor = "clue0";
+        clue0Label.textContent = "Clue 1";
+        puzzleForm.appendChild(clue0Label);
+        puzzleForm.appendChild(document.createElement("br"));
+
+        const clue0Input = document.createElement("textarea");
+        clue0Input.id = "clue0";
+        clue0Input.rows = 2;
+        puzzleForm.appendChild(clue0Input);
+        puzzleForm.appendChild(document.createElement("br"));
+        puzzleForm.appendChild(document.createElement("br"));
+
+        const clue1Label = document.createElement("label");
+        clue1Label.htmlFor = "clue1";
+        clue1Label.textContent = "Clue 2";
+        puzzleForm.appendChild(clue1Label);
+        puzzleForm.appendChild(document.createElement("br"));
+
+        const clue1Input = document.createElement("textarea");
+        clue1Input.id = "clue1";
+        clue1Input.rows = 2;
+        puzzleForm.appendChild(clue1Input);
+        puzzleForm.appendChild(document.createElement("br"));
+        puzzleForm.appendChild(document.createElement("br"));
+
+        const submitBtn = document.createElement("button");
+        submitBtn.id = "submitBtn";
+        submitBtn.className = "button";
+        submitBtn.textContent = "Submit";
+        puzzleForm.appendChild(submitBtn);
 
         // submit button
-        document.getElementById("submitPuzzleBtn").addEventListener("click", async () => {
+        submitBtn.addEventListener("click", async () => {
 
             const puzzle = {
                 datePlayed: document.getElementById("datePlayed").value,
@@ -55,7 +118,7 @@ window.addEventListener("load", async() => {
                 clue1: document.getElementById("clue1").value.trim()
             };
 
-            // Basic validation
+            // basic validation
             if (!puzzle.datePlayed || !puzzle.word || !puzzle.clue0 || !puzzle.clue1) {
                 alert("Please complete all fields.");
                 return;

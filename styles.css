@@ -5,6 +5,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    font-size: 24px;
 }
 
 #splash {
@@ -22,6 +23,10 @@ body {
 }
 
 #splash img {
+    width: 370px;
+}
+
+#outerDiv {
     width: 370px;
 }
 
@@ -66,9 +71,35 @@ body {
 }
 
 #titleDiv {
+    display: flex;
     font-size: 40px;
     font-weight: bold;
-    align-self: center;
+    justify-content: center;
     margin-bottom: 10px;
     margin-top: 10px;
+}
+
+input[type="text"] {
+    font-size: 24px;
+    width: 370px;
+}
+
+#submitBtn {
+    display: block;
+    margin: auto;
+}
+
+#puzzleForm textarea {
+    font-size: 24px;
+    width: 370px;
+    resize: none;
+}
+
+#word {
+    text-transform: uppercase;
+}
+
+#logout {
+    display: flex;
+    justify-content: center;
 }
