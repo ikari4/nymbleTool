@@ -75,6 +75,10 @@ function displayScores(scoreArray) {
 
     scoreArray.forEach(player => {
 
+        if (player.username === "admin") {
+           return;
+        }
+        
         const row = document.createElement("tr");
 
         // Username
