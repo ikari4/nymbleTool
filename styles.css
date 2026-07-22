@@ -94,7 +94,7 @@ body {
 
 input[type="text"] {
     font-size: 24px;
-    width: 100%;
+    width: 370px;
 }
 
 #submitBtn {
@@ -104,7 +104,7 @@ input[type="text"] {
 
 #puzzleForm textarea {
     font-size: 24px;
-    width: 100%;
+    width: 370px;
     resize: none;
 }
 
