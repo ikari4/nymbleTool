@@ -94,7 +94,8 @@ body {
 
 input[type="text"] {
     font-size: 24px;
-    width: 370px;
+    width: 366px;
+    padding: 2px 0;
 }
 
 #submitBtn {
@@ -104,19 +105,27 @@ input[type="text"] {
 
 #puzzleForm textarea {
     font-size: 24px;
-    width: 370px;
+    width: 368px;
     resize: none;
+    padding: 2px 0;
 }
 
 #word {
     text-transform: uppercase;
 }
 
+#hr1 {
+    height:1px;
+    width: 370px;
+    margin: 20px 0;
+    background-color: #033f63;
+}
+
 .scoresTable {
     width: 100%;
     font-size: 14px;
     border-collapse: collapse;
-    margin: 60px 0;
+    margin: 20px 0;
 }
 
 .scoresTable th,

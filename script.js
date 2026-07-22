@@ -52,7 +52,7 @@ function getISOWeekAndYear() {
 
 function displayScores(scoreArray) {
 
-    statusDiv.innerHTML = "";
+    statusDiv.innerHTML = "Today's Game";
 
     const table = document.createElement("table");
     table.className = "scoresTable";
@@ -61,9 +61,17 @@ function displayScores(scoreArray) {
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
 
-    ["Username", "Final", "Score", "Letters"].forEach(text => {
+    const columns = [
+        { text: "Username", width: "25%" },
+        { text: "Final",    width: "20%" },
+        { text: "Score",    width: "20%" },
+        { text: "Letters",  width: "35%" }
+    ];
+
+    columns.forEach(col => {
         const th = document.createElement("th");
-        th.textContent = text;
+        th.textContent = col.text;
+        th.style.width = col.width;
         headerRow.appendChild(th);
     });
 
